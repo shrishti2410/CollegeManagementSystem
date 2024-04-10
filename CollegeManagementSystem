@@ -1,0 +1,610 @@
+import java.util.*;
+
+public class MiniProject {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        CollegeManagementSystem cms = new CollegeManagementSystem();
+        int choice;
+        do {
+            System.out.println("Which domain would you like to visit?");
+            System.out.println("1. Student");
+            System.out.println("2. Instructor");
+            System.out.println("3. Companies for internship");
+            System.out.println("4. Canteen");
+            System.out.println("5. Exit");
+            choice = sc.nextInt();
+            sc.nextLine();
+            switch (choice) {
+                case 1:
+                    StudentSection(cms);
+                    break;
+                case 2:
+                    InstructorSection(cms);
+                    break;
+                case 3:
+                    InternshipEligibilitySection(cms);
+                    break;
+                case 4:
+                    // CanteenSection(cms);
+                    break;
+                case 5:
+                    System.out.println("Exiting...");
+                    break;
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+            }
+        } while (choice != 5);
+        sc.close();
+    }
+
+    private static void StudentSection(CollegeManagementSystem cms) {
+        Scanner sc = new Scanner(System.in);
+        int t;
+        do {
+            System.out.println("Section : Students");
+            System.out.println("Enter:\n1 View student details\n2 Add a new student\n3 Delete a student\n4 Update student info\n5 Exit");
+            t = sc.nextInt();
+            sc.nextLine();
+            switch (t) {
+                case 1:
+                    viewStudentDetails(cms);
+                    break;
+                case 2:
+                    addNewStudent(cms);
+                    break;
+                case 3:
+                    removeStudent(cms);
+                    break;
+                case 4:
+                    updateStudentInfo(cms);
+                    break;
+                case 5:
+                    System.out.println("Exiting Student Section...");
+                    break;
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+            }
+        } while (t != 5);
+    }
+
+    private static void viewStudentDetails(CollegeManagementSystem cms) {
+        Scanner sc = new Scanner(System.in);
+        int c;
+        do {
+            System.out.println("Enter:\n1 Search by name\n2 Search by id\n3 View by branch\n4 View toppers \n5 View all \n6 Exit");
+            c = sc.nextInt();
+            sc.nextLine();
+            switch (c) {
+                case 1:
+                    searchStudentByName(cms);
+                    break;
+                case 2:
+                    searchStudentById(cms);
+                    break;
+                case 3:
+                    viewStudentsByBranch(cms);
+                    break;
+                case 4:
+                    viewToppers(cms);
+                    break;
+                case 5:
+                    viewAllStudents(cms);
+                    break;
+                case 6:
+                    System.out.println("Exiting...");
+                    break;
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+            }
+        } while (c != 6);
+    }
+
+    private static void searchStudentByName(CollegeManagementSystem cms) {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Enter name:");
+        String name = sc.nextLine();
+        List<Student> students = cms.searchByName(name);
+        printStudentList(students);
+    }
+
+    private static void searchStudentById(CollegeManagementSystem cms) {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Enter id:");
+        String id = sc.nextLine();
+        List<Student> students = cms.searchById(id);
+        printStudentList(students);
+    }
+
+    private static void viewStudentsByBranch(CollegeManagementSystem cms) {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Enter branch:");
+        String branch = sc.nextLine();
+        List<Student> students = cms.viewByBranch(branch);
+        printStudentList(students);
+    }
+
+    private static void viewToppers(CollegeManagementSystem cms) {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Enter minimum CGPA:");
+        double cgpa = sc.nextDouble();
+        List<Student> students = cms.viewToppers(cgpa);
+        printStudentList(students);
+    }
+
+    private static void viewAllStudents(CollegeManagementSystem cms) {
+        List<Student> students = cms.viewAllStudents();
+        printStudentList(students);
+    }
+
+    private static void printStudentList(List<Student> students) {
+        if (students.isEmpty()) {
+            System.out.println("No students found.");
+        } else {
+            System.out.println("Students:");
+            for (Student student : students) {
+                System.out.println("Name: " + student.getName());
+                System.out.println("ID: " + student.getId());
+                System.out.println("Branch: " + student.getBranch());
+                System.out.println("CGPA: " + student.getCgpa());
+                System.out.println();
+            }
+        }
+    }
+
+    private static void addNewStudent(CollegeManagementSystem cms) {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Enter student ID:");
+        String id = sc.nextLine();
+        System.out.println("Enter student name:");
+        String name = sc.nextLine();
+        System.out.println("Enter student branch:");
+        String branch = sc.nextLine();
+        System.out.println("Enter student CGPA:");
+        double cgpa = sc.nextDouble();
+        sc.nextLine();
+        Student newStudent = new Student(id, name, branch, cgpa);
+        cms.addStudent(newStudent);
+        System.out.println("Student added successfully.");
+    }
+
+    private static void removeStudent(CollegeManagementSystem cms) {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Enter student ID to remove:");
+        String id = sc.nextLine();
+        cms.deleteStudent(id);
+        System.out.println("Student removed successfully.");
+    }
+
+    private static void updateStudentInfo(CollegeManagementSystem cms) {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Enter student ID to update:");
+        String idToUpdate = sc.nextLine();
+        List<Student> studentsByIdToUpdate = cms.searchById(idToUpdate);
+        if (studentsByIdToUpdate.isEmpty()) {
+            System.out.println("No student found with ID: " + idToUpdate);
+        } else {
+            for (Student student : studentsByIdToUpdate) {
+                System.out.println("Enter new name:");
+                String newName = sc.nextLine();
+                System.out.println("Enter new branch:");
+                String newBranch = sc.nextLine();
+                System.out.println("Enter new CGPA:");
+                double newCgpa = sc.nextDouble();
+                sc.nextLine();
+                student.setName(newName);
+                student.setBranch(newBranch);
+                student.setCgpa(newCgpa);
+                cms.updateStudent(student);
+                System.out.println("Student details updated successfully.");
+            }
+        }
+    }
+
+    private static void InstructorSection(CollegeManagementSystem cms) {
+        Scanner sc = new Scanner(System.in);
+        int t;
+        do {
+            System.out.println("Section : Instructor");
+            System.out.println("Enter:\n1 View instructor details\n2 Add a new instructor\n3 Remove a instructor\n4 Update instructor info\n5 Exit");
+            t = sc.nextInt();
+            sc.nextLine();
+            switch (t) {
+                case 1:
+                    viewInstructorDetails(cms);
+                    break;
+                case 2:
+                    addNewInstructor(cms);
+                    break;
+                case 3:
+                    removeInstructor(cms);
+                    break;
+                case 4:
+                    updateInstructorInfo(cms);
+                    break;
+                case 5:
+                    System.out.println("Exiting Instructor Section...");
+                    break;
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+            }
+        } while (t != 5);
+    }
+
+    private static void viewInstructorDetails(CollegeManagementSystem cms) {
+        Scanner sc = new Scanner(System.in);
+        int c;
+        do {
+            System.out.println("Enter:\n1 Search by name\n2 Search by id\n3 View by branch\n4 View all \n5 Exit");
+            c = sc.nextInt();
+            sc.nextLine();
+            switch (c) {
+                case 1:
+                    searchInstructorByName(cms);
+                    break;
+                case 2:
+                    searchInstructorById(cms);
+                    break;
+                case 3:
+                    viewInstructorByBranch(cms);
+                    break;
+                case 4:
+                    viewAllInstructors(cms);
+                    break;
+                case 5:
+                    System.out.println("Exiting...");
+                    break;
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+            }
+        } while (c != 5);
+    }
+
+    private static void searchInstructorByName(CollegeManagementSystem cms) {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Enter name:");
+        String name = sc.nextLine();
+        List<Instructor> instructor = cms.searchByName_I(name);
+        printInstructorsList(instructor);
+    }
+
+    private static void searchInstructorById(CollegeManagementSystem cms) {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Enter id:");
+        String id = sc.nextLine();
+        List<Instructor> Instructor = cms.searchById_I(id);
+        printInstructorsList(Instructor);
+    }
+
+    private static void viewInstructorByBranch(CollegeManagementSystem cms) {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Enter branch:");
+        String branch = sc.nextLine();
+        List<Instructor> instructor = cms.viewByBranch_I(branch);
+        printInstructorsList(instructor);
+    }
+
+    private static void viewAllInstructors(CollegeManagementSystem cms) {
+        List<Instructor> instructor = cms.viewAllInstructors();
+        printInstructorsList(instructor);
+    }
+
+    private static void printInstructorsList(List<Instructor> instructors) {
+        if (instructors.isEmpty()) {
+            System.out.println("No instructors found.");
+        } else {
+            System.out.println("Instructors:");
+            for (Instructor instructor : instructors) {
+                System.out.println("Name: " + instructor.getName());
+                System.out.println("ID: " + instructor.getId());
+                System.out.println("Branch: " + instructor.getBranch());
+                System.out.println();
+            }
+        }
+    }
+
+    private static void addNewInstructor(CollegeManagementSystem cms) {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Enter instructor ID:");
+        String id = sc.nextLine();
+        System.out.println("Enter instructor name:");
+        String name = sc.nextLine();
+        System.out.println("Enter instructor branch:");
+        String branch = sc.nextLine();
+        Instructor newInstructor = new Instructor(id, name, branch);
+        cms.addInstructor(newInstructor);
+        System.out.println("Instructor added successfully.");
+    }
+
+    private static void removeInstructor(CollegeManagementSystem cms) {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Enter instructor ID to remove:");
+        String id = sc.nextLine();
+        cms.deleteInstructor(id);
+        System.out.println("Instructor removed successfully.");
+    }
+
+    private static void updateInstructorInfo(CollegeManagementSystem cms) {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Enter instructor ID to update:");
+        String idToUpdate = sc.nextLine();
+        List<Instructor> instructorByIdToUpdate = cms.searchById_I(idToUpdate);
+        if (instructorByIdToUpdate.isEmpty()) {
+            System.out.println("No student found with ID: " + idToUpdate);
+        } else {
+            for (Instructor instructor : instructorByIdToUpdate) {
+                System.out.println("Enter new name:");
+                String newName = sc.nextLine();
+                System.out.println("Enter new branch:");
+                String newBranch = sc.nextLine();
+                instructor.setName(newName);
+                instructor.setBranch(newBranch);
+                cms.updateInstructor(instructor);
+                System.out.println("Instructor details updated successfully.");
+            }
+        }
+    }
+
+    private static void InternshipEligibilitySection(CollegeManagementSystem cms) {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Enter student's ID:");
+        String id = sc.next();
+        List<Student> students = cms.searchById(id);
+        if (students.isEmpty()) {
+            System.out.println("No student found with the provided ID");
+            return;
+        }
+        Student student = students.get(0);
+        double studentCGPA = student.getCgpa();
+
+        List<Company> companies = initializeCompanies();
+        System.out.println("Eligible Companies:");
+        for (Company company : companies) {
+            if (studentCGPA >= company.minCGPA) {
+                System.out.println("Company Name: " + company.name);
+                System.out.println("Stipend: Rs " + company.stipend);
+                System.out.println("Minimum CGPA required: " + company.minCGPA);
+                System.out.println();
+            }
+        }
+    }
+    private static List<Company> initializeCompanies() {
+        List<Company> companies = new ArrayList<>();
+        companies.add(new Company("Microsoft", 100000, 6.0));
+        companies.add(new Company("Amazon", 150000, 6.0));
+        companies.add(new Company("Google", 100000, 6.0));
+        companies.add(new Company("JP Morgan", 50000, 6.0));
+        companies.add(new Company("DE Shaw", 50000, 7.0));
+        companies.add(new Company("Atlassian", 100000, 7.0));
+        companies.add(new Company("TCS", 25000, 8.0));
+        companies.add(new Company("Goldman Sachs", 100000, 8.0));
+        companies.add(new Company("Citi", 50000, 9.0));
+        companies.add(new Company("Oracle", 75000, 9.0));
+        return companies;
+    }
+}
+
+class Student {
+    private String id;
+    private String name;
+    private String branch;
+    private double cgpa;
+
+    Student(){
+
+    }
+
+    public Student(String id, String name, String branch, double cgpa) {
+        this.id = id;
+        this.name = name;
+        this.branch = branch;
+        this.cgpa = cgpa;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getBranch() {
+        return branch;
+    }
+
+    public void setBranch(String branch) {
+        this.branch = branch;
+    }
+
+    public double getCgpa() {
+        return cgpa;
+    }
+
+    public void setCgpa(double cgpa) {
+        this.cgpa = cgpa;
+    }
+}
+
+class Instructor {
+    private String id;
+    private String name;
+    private String branch;
+
+    public Instructor(String id, String name, String branch) {
+        this.id = id;
+        this.name = name;
+        this.branch = branch;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getBranch() {
+        return branch;
+    }
+
+    public void setBranch(String branch) {
+        this.branch = branch;
+    }
+}
+
+class Company {
+    String name;
+    double stipend;
+    double minCGPA;
+
+    public Company(String name, double stipend, double minCGPA) {
+        this.name = name;
+        this.stipend = stipend;
+        this.minCGPA = minCGPA;
+    }
+}
+
+
+class CollegeManagementSystem {
+    public Map<String, Student> studentMap;
+    public Map<String, Instructor> instructorMap;
+
+    public CollegeManagementSystem() {
+        this.studentMap=new HashMap<>();
+        this.instructorMap=new HashMap<>();
+    }
+
+    // Add student
+    public void addStudent(Student student) {
+        studentMap.put(student.getId(), student);
+    }
+
+    // Update student
+    public void updateStudent(Student student) {
+        studentMap.put(student.getId(), student);
+    }
+
+    // Delete student
+    public void deleteStudent(String id) {
+        studentMap.remove(id);
+    }
+
+    // View all students
+    public List<Student> viewAllStudents() {
+        return new ArrayList<>(studentMap.values());
+    }
+
+    // Search by ID
+    public List<Student> searchById(String id) {
+        List<Student> result = new ArrayList<>();
+        for (Student student : studentMap.values()) {
+            if (student.getId().equals(id)) {
+                result.add(student);
+            }
+        }
+        return result;
+    }
+
+    // Search by name
+    public List<Student> searchByName(String name) {
+        List<Student> result = new ArrayList<>();
+        for (Student student : studentMap.values()) {
+            if (student.getName().equals(name)) {
+                result.add(student);
+            }
+        }
+        return result;
+    }
+
+    // View branch wise
+    public List<Student> viewByBranch(String branch) {
+        List<Student> result = new ArrayList<>();
+        for (Student student : studentMap.values()) {
+            if (student.getBranch().equals(branch)) {
+                result.add(student);
+            }
+        }
+        return result;
+    }
+
+    public List<Student> viewToppers(double cgpa) {
+        List<Student> result = new ArrayList<>();
+        for (Student student : studentMap.values()) {
+            if (student.getCgpa() >= cgpa) {
+                result.add(student);
+            }
+        }
+        return result;
+    }
+
+
+    // Add instructor
+    public void addInstructor(Instructor instructor) {
+        instructorMap.put(instructor.getId(), instructor);
+    }
+
+    // Update instructor
+    public void updateInstructor(Instructor instructor) {
+        instructorMap.put(instructor.getId(), instructor);
+    }
+
+    // Delete instructor
+    public void deleteInstructor(String id) {
+        instructorMap.remove(id);
+    }
+
+    // View all instructors
+    public List<Instructor> viewAllInstructors() {
+        return new ArrayList<>(instructorMap.values());
+    }
+
+    // Search by ID
+    public List<Instructor> searchById_I(String id) {
+        List<Instructor> result = new ArrayList<>();
+        for (Instructor instructor : instructorMap.values()) {
+            if (instructor.getId().equals(id)) {
+                result.add(instructor);
+            }
+        }
+        return result;
+    }
+
+    // Search by name
+    public List<Instructor> searchByName_I(String name) {
+        List<Instructor> result = new ArrayList<>();
+        for (Instructor instructor : instructorMap.values()) {
+            if (instructor.getName().equals(name)) {
+                result.add(instructor);
+            }
+        }
+        return result;
+    }
+
+    // View branch wise
+    public List<Instructor> viewByBranch_I(String branch) {
+        List<Instructor> result = new ArrayList<>();
+        for (Instructor instructor : instructorMap.values()) {
+            if (instructor.getBranch().equals(branch)) {
+                result.add(instructor);
+            }
+        }
+        return result;
+    }
+}
