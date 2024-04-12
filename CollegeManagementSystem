@@ -10,7 +10,7 @@ public class MiniProject {
             System.out.println("1. Student");
             System.out.println("2. Instructor");
             System.out.println("3. Companies for internship");
-            System.out.println("4. Canteen");
+            System.out.println("4. Fees");
             System.out.println("5. Exit");
             choice = sc.nextInt();
             sc.nextLine();
@@ -25,7 +25,7 @@ public class MiniProject {
                     InternshipEligibilitySection(cms);
                     break;
                 case 4:
-                    // CanteenSection(cms);
+                    FeesSection(cms);
                     break;
                 case 5:
                     System.out.println("Exiting...");
@@ -381,6 +381,84 @@ public class MiniProject {
         companies.add(new Company("Oracle", 75000, 9.0));
         return companies;
     }
+
+    private static void FeesSection(CollegeManagementSystem cms) {
+        Scanner sc = new Scanner(System.in);
+        int t;
+        do {
+            System.out.println("Section : Fees");
+            System.out.println("Enter:\n1. Add student fee\n2. Update student fee\n3. View student fee\n4. Delete student fee\n5. Exit");
+            t = sc.nextInt();
+            sc.nextLine();
+            switch (t) {
+                case 1:
+                    addStudentFee(cms, sc);
+                    break;
+                case 2:
+                    updateStudentFee(cms, sc);
+                    break;
+                case 3:
+                    viewStudentFee(cms, sc);
+                    break;
+                case 4:
+                    deleteStudentFee(cms, sc);
+                    break;
+                case 5:
+                    System.out.println("Exiting Fees Section...");
+                    break;
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+            }
+        } while (t != 5);
+    }
+    private static void addStudentFee(CollegeManagementSystem cms, Scanner sc) {
+        System.out.println("Enter student category:");
+        System.out.println("1. General");
+        System.out.println("2. OBC");
+        System.out.println("3. SC/ST");
+        int categoryChoice = sc.nextInt();
+        sc.nextLine();
+        double fee = 0.0;
+        switch (categoryChoice) {
+            case 1:
+                fee = 200000;
+                break;
+            case 2:
+                fee = 100000;
+                break;
+            case 3:
+                fee = 10000;
+                break;
+            default:
+                System.out.println("Invalid category choice.");
+                return;
+        }
+        System.out.println("Enter student ID:");
+        String studentId = sc.nextLine();
+        cms.addStudentFee(studentId, fee);
+    }
+
+    private static void updateStudentFee(CollegeManagementSystem cms, Scanner sc) {
+        System.out.println("Enter student ID:");
+        String studentId = sc.nextLine();
+        System.out.println("Enter new fee amount:");
+        double newAmount = sc.nextDouble();
+        sc.nextLine(); // Consume newline
+        cms.updateStudentFee(studentId, newAmount);
+    }
+
+    private static void viewStudentFee(CollegeManagementSystem cms, Scanner sc) {
+        System.out.println("Enter student ID:");
+        String studentId = sc.nextLine();
+        double fee = cms.viewStudentFee(studentId);
+        System.out.println("Fee for student with ID " + studentId + " is: " + fee);
+    }
+
+    private static void deleteStudentFee(CollegeManagementSystem cms, Scanner sc) {
+        System.out.println("Enter student ID:");
+        String studentId = sc.nextLine();
+        cms.deleteStudentFee(studentId);
+    }
 }
 
 class Student {
@@ -480,15 +558,43 @@ class Company {
         this.minCGPA = minCGPA;
     }
 }
+class Fees {
+    private String studentId;
+    private double amount;
+
+    public Fees(String studentId, double amount) {
+        this.studentId = studentId;
+        this.amount = amount;
+    }
+
+    public String getStudentId() {
+        return studentId;
+    }
+
+    public void setStudentId(String studentId) {
+        this.studentId = studentId;
+    }
+
+    public double getAmount() {
+        return amount;
+    }
+
+    public void setAmount(double amount) {
+        this.amount = amount;
+    }
+}
+
 
 
 class CollegeManagementSystem {
     public Map<String, Student> studentMap;
     public Map<String, Instructor> instructorMap;
+    public Map<String, Double> studentFees;
 
     public CollegeManagementSystem() {
         this.studentMap=new HashMap<>();
         this.instructorMap=new HashMap<>();
+        this.studentFees=new HashMap<>();
     }
 
     // Add student
@@ -606,5 +712,47 @@ class CollegeManagementSystem {
             }
         }
         return result;
+    }
+
+    public void addStudentFee(String studentId, double fee) {
+        // Check if the student already exists
+        if (studentMap.containsKey(studentId)) {
+            // Add the student fee to the system
+            studentFees.put(studentId, fee);
+            System.out.println("Fee added for student with ID " + studentId + ": Rs " + fee);
+        } else {
+            // If the student does not exist, display an error message
+            System.out.println("Student with ID " + studentId + " does not exist.");
+        }
+    }
+
+    // Update student fee
+    public void updateStudentFee(String studentId, double newAmount) {
+        if (studentFees.containsKey(studentId)) {
+            studentFees.put(studentId, newAmount);
+            System.out.println("Fee updated successfully for student with ID " + studentId);
+        } else {
+            System.out.println("Fee for student with ID " + studentId + " does not exist. Use add option to add a new fee.");
+        }
+    }
+
+    // View student fee
+    public double viewStudentFee(String studentId) {
+        if (studentFees.containsKey(studentId)) {
+            return studentFees.get(studentId);
+        } else {
+            System.out.println("Fee for student with ID " + studentId + " does not exist.");
+            return 0.0;
+        }
+    }
+
+    // Delete student fee
+    public void deleteStudentFee(String studentId) {
+        if (studentFees.containsKey(studentId)) {
+            studentFees.remove(studentId);
+            System.out.println("Fee deleted successfully for student with ID " + studentId);
+        } else {
+            System.out.println("Fee for student with ID " + studentId + " does not exist.");
+        }
     }
 }
